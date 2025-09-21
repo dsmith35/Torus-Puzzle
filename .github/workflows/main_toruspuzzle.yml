@@ -1,4 +1,4 @@
-# gh workflow
+# workflow
 name: Build and deploy Django + React to Azure Web App - TorusPuzzle
 
 on:
@@ -76,6 +76,7 @@ jobs:
           app-name: 'TorusPuzzle'
           slot-name: 'Production'
           package: app.zip
+
 
 
 
