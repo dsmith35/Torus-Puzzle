@@ -1,45 +1,14 @@
-#gh w
-name: Azure Deployment
+- uses: actions/setup-python@v4
+  with:
+    python-version: '3.11'
 
-on:
-  push:
-    branches: [ main ]
+- name: Install dependencies
+  run: |
+    pip install -r requirements.txt
 
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-    
-    steps:
-    - uses: actions/checkout@v3
-    
-    - name: Set up Python 3.11
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.11'
-    
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
-    
-    - name: Install Python dependencies
-      run: |
-        pip install -r requirements.txt
-    
-    - name: Install Node.js dependencies and build
-      run: |
-        cd frontend
-        npm install
-        npm run build
-        cd ..
-    
-    - name: Collect static files
-      run: |
-        python Qbackend/manage.py collectstatic --noinput
-    
-    - name: Deploy to Azure Web App
-      uses: azure/webapps-deploy@v2
-      with:
-        app-name: 'TorusPuzzle'
-        publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
-
+- name: Azure WebApp Deploy
+  uses: azure/webapps-deploy@v2
+  with:
+    app-name: <YOUR_APP_NAME>
+    slot-name: 'production'
+    publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
