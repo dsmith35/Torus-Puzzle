@@ -1,71 +1,75 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-# More info on Python, GitHub Actions, and Azure App Service: https://aka.ms/python-webapps-actions
-
-name: Build and deploy Python app to Azure Web App - TorusPuzzle
+name: Build and deploy Django + React to Azure Web App - TorusPuzzle
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read #This is required for actions/checkout
 
     steps:
-      - uses: actions/checkout@v4
+      # 1️⃣ Checkout code
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
-      - name: Set up Python version
+      # 2️⃣ Setup Node.js (for React)
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      # 3️⃣ Setup Python
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: Create and start virtual environment
+      # 4️⃣ Install backend dependencies
+      - name: Install backend dependencies
         run: |
-          python -m venv venv
-          source venv/bin/activate
-      
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-        
-      # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-      - name: Upload artifact for deployment jobs
-        uses: actions/upload-artifact@v4
-        with:
-          name: python-app
-          path: |
-            .
-            !venv/
+      # 5️⃣ Build React frontend
+      - name: Build React frontend
+        working-directory: ./frontend
+        env:
+          NPM_CONFIG_LEGACY_PEER_DEPS: 'true'
+        run: |
+          npm install ajv@6 ajv-keywords@3 --save-dev
+          npm ci
+          npm run build
+          mkdir -p ../Qbackend/templates ../Qbackend/static
+          cp -r build/* ../Qbackend/templates/
+          cp -r build/static/* ../Qbackend/static/
 
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build
-    permissions:
-      id-token: write #This is required for requesting the JWT
-      contents: read #This is required for actions/checkout
+      # 6️⃣ Django migrate & collectstatic
+      - name: Django migrate & collectstatic
+        env:
+          DJANGO_SETTINGS_MODULE: Qbackend.settings
+        run: |
+          python Qbackend/manage.py migrate --noinput
+          python Qbackend/manage.py collectstatic --noinput
 
-    steps:
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v4
-        with:
-          name: python-app
-      
+      # 7️⃣ Archive app
+      - name: Archive app
+        run: zip -r app.zip .
+
+      # 8️⃣ Login to Azure (manual service principal)
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_67BCABF3AC1F4D6E9A4A106CBF84FE9D }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_8C1B07B181B248E88E46C004CF2280BF }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_221C938FD4434EDF905E2D76AD0A35EC }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
 
-      - name: 'Deploy to Azure Web App'
+      # 9️⃣ Deploy to Azure Web App
+      - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
-        id: deploy-to-webapp
         with:
           app-name: 'TorusPuzzle'
           slot-name: 'Production'
-          
+          package: app.zip
