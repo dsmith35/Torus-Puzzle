@@ -56,7 +56,9 @@ jobs:
 
       # Archive app
       - name: Archive app
-        run: zip -r app.zip .
+        run: |
+          cd Qbackend
+          zip -r ../app.zip .
 
       # Login to Azure (manual service principal)
       - name: Login to Azure
@@ -74,6 +76,7 @@ jobs:
           app-name: 'TorusPuzzle'
           slot-name: 'Production'
           package: app.zip
+
 
 
 
