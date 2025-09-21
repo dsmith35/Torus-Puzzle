@@ -10,29 +10,29 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout code
+      # Checkout code
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      # 2️⃣ Setup Node.js (for React)
+      # Setup Node.js (for React)
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
 
-      # 3️⃣ Setup Python
+      # Setup Python
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      # 4️⃣ Install backend dependencies
+      # Install backend dependencies
       - name: Install backend dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # 5️⃣ Build React frontend
+      # Build React frontend
       - name: Build React frontend
         working-directory: ./frontend
         env:
@@ -45,7 +45,7 @@ jobs:
           cp -r build/* ../Qbackend/templates/
           cp -r build/static/* ../Qbackend/static/
 
-      # 6️⃣ Django migrate & collectstatic
+      # Django migrate & collectstatic
       - name: Django migrate & collectstatic
         env:
           DJANGO_SETTINGS_MODULE: Qbackend.settings
@@ -53,11 +53,11 @@ jobs:
           python Qbackend/manage.py migrate --noinput
           python Qbackend/manage.py collectstatic --noinput
 
-      # 7️⃣ Archive app
+      # Archive app
       - name: Archive app
         run: zip -r app.zip .
 
-      # 8️⃣ Login to Azure (manual service principal)
+      # Login to Azure (manual service principal)
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -66,10 +66,11 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
 
-      # 9️⃣ Deploy to Azure Web App
+      # Deploy to Azure Web App
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'TorusPuzzle'
           slot-name: 'Production'
           package: app.zip
+
