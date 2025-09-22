@@ -54,7 +54,7 @@ ROOT_URLCONF = 'Qbackend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / "frontend" / "build"],  # React index.html
+        'DIRS': [BASE_DIR.parent / "frontend" / "build"],  # <--- note .parent
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -93,7 +93,7 @@ USE_TZ = True
 
 # Static files
 STATIC_URL = "/static/"
-STATICFILES_DIRS = [BASE_DIR / "frontend" / "build" / "static"]
+STATICFILES_DIRS = [BASE_DIR.parent / "frontend" / "build" / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Custom user model
