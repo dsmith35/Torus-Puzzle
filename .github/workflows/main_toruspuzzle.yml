@@ -10,37 +10,46 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    # 1️⃣ Checkout the repo
     - name: Checkout code
       uses: actions/checkout@v3
 
-    # 1. Build React frontend
+    # 2️⃣ Setup Node.js for React build
     - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
         node-version: '20'
 
-    - name: Install frontend deps
+    # 3️⃣ Install frontend dependencies and build React
+    - name: Build React frontend
       run: |
         cd frontend
         npm install --legacy-peer-deps
         npm run build
+        # Move build folder into Qbackend so Django can see it
+        mkdir -p ../Qbackend/frontend
+        mv build ../Qbackend/frontend/build
+        cd ..
 
-    # 2. Setup Python
+    # 4️⃣ Setup Python for Django
     - name: Setup Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.11'
 
+    # 5️⃣ Install Python dependencies
     - name: Install Python deps
-      run: pip install -r requirements.txt
+      run: |
+        pip install --upgrade pip
+        pip install -r Qbackend/requirements.txt
 
-    # 3. Collect Django static files and migrate
-    - name: Collect static and migrate
+    # 6️⃣ Collect static files and apply migrations
+    - name: Collect Django static files and migrate
       run: |
         python Qbackend/manage.py collectstatic --noinput
         python Qbackend/manage.py migrate
 
-    # 4. Deploy to Azure
+    # 7️⃣ Deploy to Azure Web App
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v2
       with:
@@ -48,4 +57,3 @@ jobs:
         slot-name: production
         publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
         package: .
-
