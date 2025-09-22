@@ -26,3 +26,5 @@ python manage.py migrate
 # 4. Start Django via Gunicorn
 echo "Starting Django server..."
 gunicorn Qbackend.wsgi:application --bind 0.0.0.0:$PORT
+
+#a
