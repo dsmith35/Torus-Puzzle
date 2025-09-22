@@ -3,10 +3,10 @@ set -e
 
 echo "PORT=$PORT"
 
-cd frontend
-npm install --legacy-peer-deps
-npm run build
-cd ..
+# cd frontend
+# npm install --legacy-peer-deps
+# npm run build
+# cd ..
 
 echo "Collecting static..."
 python Qbackend/manage.py collectstatic --noinput
