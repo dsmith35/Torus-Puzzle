@@ -10,6 +10,7 @@ import VSBot from './pages/VSBot';
 import Timer from './components/Timer';
 import ClassicLB from './pages/ClassicLB';
 import DailyLB from './pages/DailyLB';
+import { BASE_URL } from './config';
 
 const Main = () => {
    return (

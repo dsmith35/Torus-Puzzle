@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/CreateAccount.css'
+import { BASE_URL } from '../config';
 
 const CreateAccount = () => {
   const [username, setUsername] = useState('');
@@ -11,7 +12,7 @@ const CreateAccount = () => {
 
   useEffect(() => {
     if (localStorage.getItem('token') !== null) {
-      window.location.replace('http://localhost:3000/');
+      window.location.replace(BASE_URL);
     } else {
       setLoading(false);
     }
@@ -26,7 +27,7 @@ const CreateAccount = () => {
       password2: password2
     };
 
-    fetch('http://127.0.0.1:8000/api/users/auth/register/', {
+    fetch(`${BASE_URL}/api/users/auth/register/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -39,7 +40,7 @@ const CreateAccount = () => {
           localStorage.clear();
           localStorage.setItem('token', data.key);
           localStorage.setItem('username', username)
-          window.location.replace('http://localhost:3000/');
+          window.location.replace(BASE_URL);
         } else {
           setUsername('');
           setPassword1('');

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/SignIn.css'
+import { BASE_URL } from '../config';
 
 const SignIn = () => {
   const [username, setUsername] = useState('');
@@ -11,7 +12,7 @@ const SignIn = () => {
 
   useEffect(() => {
     if (localStorage.getItem('token') !== null) {
-      window.location.replace('http://localhost:3000/');
+      window.location.replace(BASE_URL);
     } else {
       setLoading(false);
     }
@@ -25,7 +26,7 @@ const SignIn = () => {
       password: password
     };
 
-    fetch('http://127.0.0.1:8000/api/users/auth/login/', {
+    fetch(`${BASE_URL}/api/users/auth/login/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -38,7 +39,7 @@ const SignIn = () => {
           localStorage.clear();
           localStorage.setItem('token', data.key);
           localStorage.setItem('username', username)
-          window.location.replace('http://localhost:3000/');
+          window.location.replace(BASE_URL);
         } else {
           setUsername('');
           setPassword('');

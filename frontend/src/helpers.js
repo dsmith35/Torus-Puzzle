@@ -1,5 +1,6 @@
 import React from "react"
 import { Link } from "react-router-dom"
+import { BASE_URL } from './config';
 
 const getTileFromId = (id, tiles) => {
     for (let i=0; i<tiles.length; i++) {
@@ -151,7 +152,7 @@ const decWidth = (w, setWidth, setTiles, setCompletedBoard) => {
 const logOut = () => {
   localStorage.removeItem("token");
   setTimeout(function() {
-    window.location.replace('http://localhost:3000/');
+    window.location.replace(BASE_URL);
   }, 1);
  }
 

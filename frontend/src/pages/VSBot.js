@@ -4,6 +4,7 @@ import Board from '../components/Board';
 import Timer from '../components/Timer';
 import helpers from '../helpers';
 import { Link } from 'react-router-dom';
+import { BASE_URL } from '../config';
 
 const VSBot = () => {
   const boardWidth = 500
@@ -70,7 +71,7 @@ const VSBot = () => {
   }
 
   function send_backend(board) {
-    fetch('http://127.0.0.1:8000/vs_bot/', {
+    fetch(`${BASE_URL}/vs_bot/`, {
       method: 'POST',
       headers: {
         'Content-Type':'application/json'
