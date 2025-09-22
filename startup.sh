@@ -1,30 +1,20 @@
 #!/bin/bash
 
-# Go to backend folder
-cd $HOME/site/wwwroot/Qbackend
-
-# Activate virtualenv if exists
-if [ -f antenv/bin/activate ]; then
-    source antenv/bin/activate
-fi
-
 # 1. Build React frontend
 echo "Building React frontend..."
-cd ../frontend
+cd frontend
 npm install --legacy-peer-deps
 npm run build
-cd ../Qbackend
+cd ..
 
-# 2. Collect Django static files
+# 2. Collect static files for Django
 echo "Collecting Django static files..."
-python manage.py collectstatic --noinput
+python Qbackend/manage.py collectstatic --noinput
 
-# 3. Apply migrations
+# 3. Apply migrations (optional but recommended)
 echo "Applying Django migrations..."
-python manage.py migrate
+python Qbackend/manage.py migrate
 
-# 4. Start Django via Gunicorn
+# 4. Run Django backend with Gunicorn
 echo "Starting Django server..."
-gunicorn Qbackend.wsgi:application --bind 0.0.0.0:$PORT
-
-#a
+gunicorn Qbackend.wsgi:application --bind=0.0.0.0:$PORT
