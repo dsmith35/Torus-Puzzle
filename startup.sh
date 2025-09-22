@@ -17,4 +17,4 @@ python Qbackend/manage.py migrate
 
 # 4. Run Django backend with Gunicorn
 echo "Starting Django server..."
-gunicorn Qbackend.wsgi:application --bind=0.0.0.0:$PORT
+gunicorn Qbackend.wsgi:application --bind 0.0.0.0:${PORT:-8000}
