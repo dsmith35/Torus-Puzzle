@@ -3,7 +3,6 @@ set -e
 
 echo "PORT=$PORT"
 
-Build frontend (optional, slow!)
 cd frontend
 npm install --legacy-peer-deps
 npm run build
@@ -17,3 +16,5 @@ python Qbackend/manage.py migrate
 
 echo "Starting Gunicorn..."
 exec gunicorn Qbackend.wsgi:application --bind=0.0.0.0:$PORT
+
+#
