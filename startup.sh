@@ -7,6 +7,7 @@ echo "Collecting static..."
 python Qbackend/manage.py collectstatic --noinput
 echo "Applying migrations..."
 python Qbackend/manage.py migrate
+echo "PORT=$PORT"
 echo "Starting Gunicorn..."
 exec gunicorn Qbackend.wsgi:application --bind=0.0.0.0:${PORT:-8000} --log-level=debug
 
